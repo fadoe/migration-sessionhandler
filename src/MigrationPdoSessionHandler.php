@@ -4,7 +4,7 @@ namespace Marktjagd\Session\Storage\Handler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\LegacyPdoSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
-class MigrationSessionHandler implements \SessionHandlerInterface
+class MigrationPdoSessionHandler implements \SessionHandlerInterface
 {
 
     private $legacyPdoSessionHandler;

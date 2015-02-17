@@ -1,12 +1,20 @@
-# migration-sessionhandler
-Migration Session Handler to convert Symfony session table from version 2.5 to version 2.6 and up
+# migration-pdo-session-handler
+Migration Session Handler to convert Symfony session table from version 2.5 to version 2.6 and up.
+
+## Background
+
+Upgrade to Symfony 2.6 contains a breaking change.
+https://github.com/symfony/symfony/blob/v2.6.0/UPGRADE-2.6.md#httpfoundation
+https://github.com/symfony/symfony/issues/12833
+It is said that you would need to migrate the table manually if you want to keep session information of your users.
+With this package there is no need to migrate your session information manually.
 
 ## Installation
 
 Install this package with composer:
 
 ```bash
-composer.phar require marktjagd/migration-sessionhandler
+composer.phar require marktjagd/migration-pdo-session-handler
 ```
 
 ## Configuration
@@ -23,24 +31,24 @@ RENAME TABLE session TO session_legacy
 
 framework:
     session:
-        handler_id: session.handler.pdo
+        handler_id: session.handler.pdo_migration
 ```
 
 ```yaml
 # services.yml
 
 services:
-    session.handler.pdo:
-        class:     Marktjagd\Session\Storage\Handler\MigrationSessionHandler
+    session.handler.pdo_migration:
+        class:     Marktjagd\Session\Storage\Handler\MigrationPdoSessionHandler
         arguments:
-            - @session.handler.legacypdo
-            - @session.handler.sessionpdo
+            - @session.handler.pdo_legacy
+            - @session.handler.pdo_session
 
-    session.handler.legacypdo:
+    session.handler.pdo_legacy:
         class:     Symfony\Component\HttpFoundation\Session\Storage\Handler\LegacyPdoSessionHandler
         arguments: [@pdo, %pdo.legacy_session_db_options%]
 
-    session.handler.sessionpdo:
+    session.handler.pdo:
         class:     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         arguments: [@pdo, %pdo.session_db_options%]
 

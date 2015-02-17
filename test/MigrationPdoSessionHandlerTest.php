@@ -1,14 +1,18 @@
 <?php
 namespace Marktjagd\SessionTest\Storage\Handler;
 
-use Marktjagd\Session\Storage\Handler\MigrationSessionHandler;
+use Marktjagd\Session\Storage\Handler\MigrationPdoSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\LegacyPdoSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
 
-class MigrationSessionHandlerTest extends \PHPUnit_Framework_TestCase
+class MigrationPdoSessionHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    private static $SESSION_ID = '123';
+    private static $SESSION_DATA = 'test';
+    private static $SESSION_DATA_EMPTY = '';
+
     /**
-     * @var MigrationSessionHandler
+     * @var MigrationPdoSessionHandler
      */
     private $migrationSession;
 
@@ -65,7 +69,7 @@ class MigrationSessionHandlerTest extends \PHPUnit_Framework_TestCase
         $this->legacySessionTable = $this->getLegacyPdoSessionHandler();
         $this->sessionTable = $this->getPdoSessionHandler();
 
-        $this->migrationSession = new MigrationSessionHandler(
+        $this->migrationSession = new MigrationPdoSessionHandler(
             $this->legacySessionTable,
             $this->sessionTable
         );
@@ -73,24 +77,25 @@ class MigrationSessionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testLegacySessionTableHasSession()
     {
-        $this->legacySessionTable->write('123', 'test');
+        $this->legacySessionTable->write(self::$SESSION_ID, self::$SESSION_DATA);
 
-        $this->assertEquals('test', $this->migrationSession->read('123'));
-        $this->assertEquals('', $this->legacySessionTable->read('123'));
-        $this->assertEquals('test', $this->sessionTable->read('123'));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->sessionTable->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA, $this->migrationSession->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->legacySessionTable->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA, $this->sessionTable->read(self::$SESSION_ID));
     }
 
     public function testNewSessionTableAlreadyUsed()
     {
-        $this->sessionTable->write('123', 'test');
-        $this->assertEquals('test', $this->migrationSession->read('123'));
-        $this->assertEquals('', $this->legacySessionTable->read('123'));
+        $this->sessionTable->write(self::$SESSION_ID, self::$SESSION_DATA);
+        $this->assertEquals(self::$SESSION_DATA, $this->migrationSession->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->legacySessionTable->read(self::$SESSION_ID));
     }
 
     public function testNewSessionCreated()
     {
-        $this->assertEquals('', $this->migrationSession->read('123'));
-        $this->assertEquals('', $this->legacySessionTable->read('123'));
-        $this->assertEquals('', $this->sessionTable->read('123'));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->migrationSession->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->legacySessionTable->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->sessionTable->read(self::$SESSION_ID));
     }
 }
