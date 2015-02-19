@@ -1,5 +1,5 @@
 {
-    "name": "marktjagd/migration-sessionhandler",
+    "name": "marktjagd/migration-pdo-session-handler",
     "description": "PDO Migration Session Handler to convert Symfony session table from version 2.5 to 2.6 and up",
     "require": {
         "symfony/http-foundation": "~2.6,<3.0"

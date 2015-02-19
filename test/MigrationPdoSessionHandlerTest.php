@@ -85,6 +85,15 @@ class MigrationPdoSessionHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::$SESSION_DATA, $this->sessionTable->read(self::$SESSION_ID));
     }
 
+    public function testWriteSessionDataInNewSessionTable()
+    {
+        $this->migrationSession->write(self::$SESSION_ID, self::$SESSION_DATA);
+
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->legacySessionTable->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA, $this->migrationSession->read(self::$SESSION_ID));
+        $this->assertEquals(self::$SESSION_DATA, $this->sessionTable->read(self::$SESSION_ID));
+    }
+
     public function testNewSessionTableAlreadyUsed()
     {
         $this->sessionTable->write(self::$SESSION_ID, self::$SESSION_DATA);
@@ -97,5 +106,13 @@ class MigrationPdoSessionHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->migrationSession->read(self::$SESSION_ID));
         $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->legacySessionTable->read(self::$SESSION_ID));
         $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->sessionTable->read(self::$SESSION_ID));
+    }
+
+    public function testDesproySession()
+    {
+        $this->legacySessionTable->write(self::$SESSION_ID, self::$SESSION_DATA);
+        $this->assertTrue($this->migrationSession->destroy(self::$SESSION_ID));
+
+        $this->assertEquals(self::$SESSION_DATA_EMPTY, $this->migrationSession->read(self::$SESSION_ID));
     }
 }
