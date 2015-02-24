@@ -1,6 +1,6 @@
 {
-    "name": "marktjagd/migration-sessionhandler",
-    "description": "Migration Session Handler to convert Symfony session table from version 2.5 to 2.6 and up",
+    "name": "marktjagd/migration-pdo-session-handler",
+    "description": "PDO Migration Session Handler to convert Symfony session table from version 2.5 to 2.6 and up",
     "require": {
         "symfony/http-foundation": "~2.6,<3.0"
     },
@@ -9,6 +9,10 @@
         {
             "name": "Falk Doering",
             "email": "falk.doering@marktjagd.de"
+        },
+        {
+          "name": "Robert Freigang",
+          "email": "robert.freigang@marktjagd.de"
         }
     ],
     "autoload": {
